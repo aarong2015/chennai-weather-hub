@@ -599,38 +599,4 @@
   </script>
 </body>
 </html>
-<!-- CYCLONE STATIC DISPLAY (Always visible, no click, auto-refresh) -->
-<section style="margin-top:16px;padding:15px;background:#0f172a;border-radius:16px;border:1px solid #64748b;">
-  <h2>Chennai Weather Hub – Cyclone Monitor</h2>
-  <p>Latest cyclone clouds and Tamil Nadu alert maps.</p>
-
-  <!-- Satellite cyclone/cloud image -->
-  <img
-    id="cyclone-sat-img"
-    src="https://mausam.imd.gov.in/imd_latest/images/insat3d.jpg"
-    alt="IMD satellite cyclone clouds"
-    style="width:100%;border-radius:12px;margin-top:8px;"
-  />
-
-  <!-- Tamil Nadu colour alert map -->
-  <img
-    id="tn-alert-img"
-    src="https://mausam.imd.gov.in/imd_latest/images/subdiv_warning/24.png"
-    alt="Tamil Nadu IMD color alerts"
-    style="width:100%;border-radius:12px;margin-top:14px;"
-  />
-
-  <p style="font-size:12px;color:#94a3b8;margin-top:10px;">
-    These images auto-refresh every 30 seconds when IMD updates them.
-  </p>
-</section>
-
-<script>
-  // Automation refresh (30 seconds)
-  setInterval(() => {
-    const sat = document.getElementById("cyclone-sat-img");
-    const tn  = document.getElementById("tn-alert-img");
-    if (sat) sat.src = "https://mausam.imd.gov.in/imd_latest/images/insat3d.jpg?ts=" + Date.now();
-    if (tn)  tn.src  = "https://mausam.imd.gov.in/imd_latest/images/subdiv_warning/24.png?ts=" + Date.now();
-  }, 30000);
-</script>
+<
