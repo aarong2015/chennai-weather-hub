@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chennai Weather & Cyclone Hub</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #020617, #0f172a);
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .nav {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-title {
+      font-weight: 600;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      margin-left: 12px;
+      text-decoration: none;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover { color: #e5e7eb; }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px;
+      padding-bottom: 32px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.75);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5);
+    }
+
+    button {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, #38bdf8, #22c55e);
+      color: #020617;
+      white-space: nowrap;
+    }
+
+    button:hover { filter: brightness(1.1); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(15, 118, 110, 0.2);
+      color: #6ee7b7;
+      margin-bottom: 8px;
+    }
+
+    .weather-main {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .temp {
+      font-size: 40px;
+      font-weight: 600;
+    }
+
+    .condition {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .section-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .list {
+      font-size: 13px;
+      padding-left: 16px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .list li { margin-bottom: 4px; }
+
+    a.link {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    a.link:hover { text-decoration: underline; }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(55, 65, 81, 0.8);
+      color: #e5e7eb;
+    }
+
+    .status {
+      font-size: 12px;
+      margin-top: 8px;
+      color: #a5b4fc;
+    }
+
+    .status.error { color: #fca5a5; }
+
+    footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    /* Map tab buttons */
+    .map-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .map-tab-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .map-tab-btn.active {
+      border-color: #38bdf8;
+      background: radial-gradient(circle at top left, #22c55e 0, #0f172a 55%);
+    }
+
+    .map-frame {
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+    }
+
+    .map-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .alert-image {
+      margin-top: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      overflow: hidden;
+    }
+
+    .alert-image img {
+      width: 100%;
+      display: block;
+    }
+
+    .badge-red {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(248, 113, 113, 0.15);
+      color: #fecaca;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header>
+    <div class="nav">
+      <div class="nav-title">
+        🌦️ Chennai Weather Hub
+      </div>
+      <nav class="nav-links">
+        <a href="#weather">Weather</a>
+        <a href="#maps">Rain & Wind Map</a>
+        <a href="#cyclone">Cyclone</a>
+        <a href="#info">Learn</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>Weather & Cyclone Dashboard</h1>
+    <p class="subtitle">
+      Live weather for Chennai (or any city), rain + wind map like Windy, and official cyclone alerts.
+    </p>
+
+    <div class="grid">
+      <!-- Left: Live Weather -->
+      <section class="card" id="weather">
+        <h2>Live Weather</h2>
+        <p class="small-text">
+          Type a city name (example: <b>Chennai</b>) and click <b>Get weather</b>.
+          <br />
+          <b>Auto-refresh:</b> every 5 minutes.
+        </p>
+
+        <form id="weather-form">
+          <label for="city-input">City</label>
+          <div class="row">
+            <input
+              type="text"
+              id="city-input"
+              placeholder="Chennai"
+              value="Chennai"
+              autocomplete="off"
+            />
+            <button type="submit">Get weather</button>
+          </div>
+        </form>
+
+        <div id="status" class="status"></div>
+
+        <div id="weather-result" style="margin-top:12px; display:none;">
+          <div class="pill" id="area-pill">Current conditions</div>
+
+          <div class="weather-main">
+            <div>
+              <div class="temp" id="temp">--°C</div>
+              <div class="condition" id="condition-text">Condition</div>
+              <div class="small-text" id="feels-like">
+                Feels like --
+              </div>
+            </div>
+            <div class="small-text" id="last-update">
+              Updated: just now
+            </div>
+          </div>
+
+          <div class="meta">
+            <div class="chip" id="humidity-chip">Humidity: --%</div>
+            <div class="chip" id="wind-chip">Wind: -- km/h</div>
+          </div>
+
+          <p class="small-text" style="margin-top:10px;">
+            Data from
+            <a class="link" id="raw-link" href="#" target="_blank" rel="noopener">
+              wttr.in
+            </a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Right: Maps (Rain + Wind like Windy) -->
+      <section class="card" id="maps">
+        <h2 class="section-title">Rain & Wind Map (Windy style)</h2>
+        <p class="small-text">
+          These maps show <b>rain clouds</b> and <b>wind flow</b> around Chennai and the Bay of Bengal.
+          Wind view helps you see from which side a cyclone is moving.
+        </p>
+
+        <div class="map-tabs">
+          <button class="map-tab-btn active" data-overlay="wind">🌬️ Wind</button>
+          <button class="map-tab-btn" data-overlay="rain">🌧️ Rain</button>
+        </div>
+
+        <div class="map-frame">
+          <!-- Windy embed: zoomed near Chennai / Bay of Bengal -->
+          <iframe
+            id="windy-frame"
+            src="https://embed.windy.com/embed2.html?lat=13.08&lon=80.27&zoom=6&level=surface&overlay=wind&menu=&type=map&location=coordinates&detail=true&detailLat=13.08&detailLon=80.27&metricWind=km/h&metricTemp=%C2%B0C"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <p class="small-text" style="margin-top:8px;">
+          <b>Tip:</b> In wind view, circular patterns over the sea usually show where a cyclone
+          or strong low-pressure system is rotating.
+        </p>
+      </section>
+    </div>
+
+    <!-- Cyclone + Alerts -->
+    <section class="card" id="cyclone" style="margin-top:16px;">
+      <h2 class="section-title">Cyclone Alerts & Red Warnings</h2>
+      <p class="small-text">
+        For serious cyclone / heavy rain, always follow <b>government warnings</b>. These links open
+        official Indian weather & disaster sites.
+      </p>
+
+      <span class="badge-red">⚠️ Red / Orange alert info</span>
+
+      <ul class="list">
+        <li>
+          <a class="link" href="https://mausam.imd.gov.in/chennai/" target="_blank" rel="noopener">
+            IMD RMC Chennai – local forecasts & warnings
+          </a>
+        </li>
+        <li>
+          <a class="link" href="https://mausam.imd.gov.in/imd_latest/contents/cyclone.php" target="_blank" rel="noopener">
+            IMD Cyclone page – track of cyclones over Bay of Bengal & Arabian Sea
+          </a>
+        </li>
+        <li>
+          <a class="link" href="https://mausam.imd.gov.in/imd_latest/contents/subdivisionwise-warning_mc.php?id=24" target="_blank" rel="noopener">
+            Tamil Nadu & Puducherry – district-wise colour warnings
+          </a>
+        </li>
+        <li>
+          <a class="link" href="https://ndma.gov.in/Natural-Hazards/Cyclone" target="_blank" rel="noopener">
+            NDMA – what to do before / during / after a cyclone (safety steps)
+          </a>
+        </li>
+      </ul>
+
+      <!-- Example image box for alerts (you can change src) -->
+      <div class="alert-image">
+        <a
+          href="https://mausam.imd.gov.in/imd_latest/contents/cyclone.php"
+          target="_blank"
+          rel="noopener"
+        >
+          <!-- You can change this image link to any current IMD cyclone map -->
+          <img
+            src="https://mausam.imd.gov.in/imd_latest/images/insat3d.jpg"
+            alt="IMD satellite / cyclone view (example)"
+          />
+        </a>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">🔔 Official alerts only</span>
+        <span class="tag">🛰️ Satellite imagery</span>
+        <span class="tag">🌊 Storm surge info</span>
+        <span class="tag">🏠 Stay indoors when red alert</span>
+      </div>
+    </section>
+
+    <!-- Learn Section -->
+    <section class="card" id="info" style="margin-top:16px;">
+      <h2 class="section-title">What happens in a cyclone?</h2>
+      <p class="small-text">
+        A cyclone is a powerful <b>low-pressure system</b> over warm ocean water, with very strong
+        rotating winds. Near Chennai, cyclones usually form over the Bay of Bengal during the
+        northeast monsoon (October–December).
+      </p>
+      <ul class="list">
+        <li>Very heavy rain → waterlogging, floods, overflowing rivers and lakes.</li>
+        <li>Strong winds → trees, hoardings, and electric poles may fall.</li>
+        <li>High waves & storm surges → danger near beaches and sea shore.</li>
+      </ul>
+      <p class="small-text">
+        This dashboard helps you:
+      </p>
+      <ul class="list">
+        <li>See temperature, wind and humidity for any city.</li>
+        <li>Watch rain and wind movement on the map near Chennai.</li>
+        <li>Open official government pages for latest cyclone warnings.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Built by Aarav in VS Code – HTML, CSS & JavaScript ✨ (auto-refresh + maps)
+    </footer>
+  </main>
+
+  <script>
+    // ==== WEATHER LOGIC (with auto-refresh) ====
+
+    const form = document.getElementById("weather-form");
+    const cityInput = document.getElementById("city-input");
+    const statusBox = document.getElementById("status");
+    const resultBox = document.getElementById("weather-result");
+
+    const tempEl = document.getElementById("temp");
+    const conditionEl = document.getElementById("condition-text");
+    const feelsEl = document.getElementById("feels-like");
+    const humidityEl = document.getElementById("humidity-chip");
+    const windEl = document.getElementById("wind-chip");
+    const areaPill = document.getElementById("area-pill");
+    const lastUpdateEl = document.getElementById("last-update");
+    const rawLinkEl = document.getElementById("raw-link");
+
+    let currentCity = "Chennai";
+
+    async function fetchWeather(city) {
+      if (!city) {
+        statusBox.textContent = "Please type a city name.";
+        resultBox.style.display = "none";
+        return;
+      }
+
+      currentCity = city; // remember latest city
+
+      statusBox.classList.remove("error");
+      statusBox.textContent = "Loading weather…";
+
+      try {
+        const url = `https://wttr.in/${encodeURIComponent(city)}?format=j1`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await res.json();
+        const current = data.current_condition[0];
+
+        const tempC = current.temp_C;
+        const feels = current.FeelsLikeC;
+        const humidity = current.humidity;
+        const wind = current.windspeedKmph;
+        const cond = current.weatherDesc[0]?.value || "Unknown";
+
+        const area = data.nearest_area?.[0];
+        const areaName = area?.areaName?.[0]?.value || city;
+        const countryName = area?.country?.[0]?.value || "";
+
+        tempEl.textContent = `${tempC}°C`;
+        conditionEl.textContent = cond;
+        feelsEl.textContent = `Feels like ${feels}°C`;
+        humidityEl.textContent = `Humidity: ${humidity}%`;
+        windEl.textContent = `Wind: ${wind} km/h`;
+        areaPill.textContent = `${areaName}${countryName ? " · " + countryName : ""}`;
+
+        lastUpdateEl.textContent = "Updated: " + new Date().toLocaleTimeString();
+        rawLinkEl.href = `https://wttr.in/${encodeURIComponent(city)}`;
+
+        resultBox.style.display = "block";
+        statusBox.textContent = "";
+      } catch (err) {
+        console.error(err);
+        statusBox.textContent = "Could not load weather. Check internet or try another city.";
+        statusBox.classList.add("error");
+        resultBox.style.display = "none";
+      }
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const city = cityInput.value.trim();
+      fetchWeather(city);
+    });
+
+    // Auto-refresh every 5 minutes (300000 ms)
+    setInterval(() => {
+      fetchWeather(currentCity);
+    }, 300000);
+
+    // Initial load for Chennai
+    fetchWeather("Chennai");
+
+    // ==== MAP TABS (Wind / Rain) ====
+
+    const mapButtons = document.querySelectorAll(".map-tab-btn");
+    const windyFrame = document.getElementById("windy-frame");
+
+    function setOverlay(overlay) {
+      // base Windy embed URL near Chennai
+      const base =
+        "https://embed.windy.com/embed2.html?lat=13.08&lon=80.27&zoom=6&level=surface&menu=&type=map&location=coordinates&detail=true&detailLat=13.08&detailLon=80.27&metricWind=km/h&metricTemp=%C2%B0C";
+
+      windyFrame.src = `${base}&overlay=${overlay}`;
+    }
+
+    mapButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        mapButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const overlay = btn.getAttribute("data-overlay");
+        setOverlay(overlay);
+      });
+    });
+  </script>
+</body>
+</html>
+<!-- CYCLONE STATIC DISPLAY (Always visible, no click, auto-refresh) -->
+<section style="margin-top:16px;padding:15px;background:#0f172a;border-radius:16px;border:1px solid #64748b;">
+  <h2>Chennai Weather Hub – Cyclone Monitor</h2>
+  <p>Latest cyclone clouds and Tamil Nadu alert maps.</p>
+
+  <!-- Satellite cyclone/cloud image -->
+  <img
+    id="cyclone-sat-img"
+    src="https://mausam.imd.gov.in/imd_latest/images/insat3d.jpg"
+    alt="IMD satellite cyclone clouds"
+    style="width:100%;border-radius:12px;margin-top:8px;"
+  />
+
+  <!-- Tamil Nadu colour alert map -->
+  <img
+    id="tn-alert-img"
+    src="https://mausam.imd.gov.in/imd_latest/images/subdiv_warning/24.png"
+    alt="Tamil Nadu IMD color alerts"
+    style="width:100%;border-radius:12px;margin-top:14px;"
+  />
+
+  <p style="font-size:12px;color:#94a3b8;margin-top:10px;">
+    These images auto-refresh every 30 seconds when IMD updates them.
+  </p>
+</section>
+
+<script>
+  // Automation refresh (30 seconds)
+  setInterval(() => {
+    const sat = document.getElementById("cyclone-sat-img");
+    const tn  = document.getElementById("tn-alert-img");
+    if (sat) sat.src = "https://mausam.imd.gov.in/imd_latest/images/insat3d.jpg?ts=" + Date.now();
+    if (tn)  tn.src  = "https://mausam.imd.gov.in/imd_latest/images/subdiv_warning/24.png?ts=" + Date.now();
+  }, 30000);
+</script>
